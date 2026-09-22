@@ -81,7 +81,7 @@
       }
     }
 
-    /* Opening Screen (Z-INDEX 999) */
+    /* Opening Screen */
     #cover-page {
       position: fixed;
       inset: 0;
@@ -133,7 +133,7 @@
       margin-bottom: 16px;
     }
 
-    /* Select 7 Photos Button */
+    /* Optional Select Photos Button */
     .file-pill {
       display: inline-flex;
       align-items: center;
@@ -142,9 +142,9 @@
       gap: 8px;
       background: #ffe3eb;
       color: #c2255c;
-      padding: 16px 28px;
+      padding: 14px 26px;
       border-radius: 45px;
-      font-size: 1.22rem;
+      font-size: 1.15rem;
       font-weight: 700;
       letter-spacing: 0.5px;
       cursor: pointer;
@@ -195,27 +195,22 @@
       transform: none;
     }
 
-    /* Click to open button */
+    /* Click to open button (Always enabled!) */
     .btn-open {
       display: inline-block;
-      margin-top: 20px;
-      padding: 14px 40px;
-      background: #ced4da;
+      margin-top: 22px;
+      padding: 15px 42px;
+      background: linear-gradient(135deg, #e64980, #c2255c);
       color: #ffffff;
       font-weight: 600;
-      font-size: 1.05rem;
+      font-size: 1.1rem;
       letter-spacing: 1px;
       border: none;
       border-radius: 50px;
-      cursor: not-allowed;
-      transition: all 0.3s ease;
-    }
-
-    .btn-open.active {
-      background: linear-gradient(135deg, #e64980, #c2255c);
       cursor: pointer;
       box-shadow: 0 10px 25px rgba(194, 37, 92, 0.45);
-      animation: popBtn 1s infinite alternate;
+      animation: popBtn 1.2s infinite alternate;
+      transition: all 0.3s ease;
     }
 
     @keyframes popBtn {
@@ -223,12 +218,16 @@
       100% { transform: scale(1.05); }
     }
 
+    .btn-open:hover {
+      box-shadow: 0 14px 30px rgba(194, 37, 92, 0.6);
+    }
+
     .hint-msg {
-      font-size: 0.95rem;
-      color: #d6336c;
-      margin-top: 14px;
-      min-height: 24px;
-      font-weight: 600;
+      font-size: 0.9rem;
+      color: #7b4f59;
+      margin-top: 12px;
+      min-height: 20px;
+      font-weight: 500;
     }
 
     /* Shared Page Container Styles */
@@ -343,7 +342,7 @@
       letter-spacing: 0.5px;
     }
 
-    /* Buttons at bottom */
+    /* Buttons */
     .action-btn-wrap {
       margin-top: 35px;
       text-align: center;
@@ -405,7 +404,6 @@
       font-weight: 700;
     }
 
-    /* Final Mara Makri Tag */
     .final-punchline {
       margin-top: 30px;
       padding: 18px 22px;
@@ -464,16 +462,17 @@
       <div class="monkey-badge">🐒🎁</div>
       <h1>Happy birthday monkey 🐒</h1>
 
-      <!-- Select 7 of YOUR photos button -->
+      <!-- Optional Select Photos button -->
       <div>
         <label class="file-pill" id="file-label" for="photo-input">
-          📷 Select 7 of <span class="highlight-your">YOUR</span> photos
+          📷 Select <span class="highlight-your">YOUR</span> photos (optional)
         </label>
         <input type="file" id="photo-input" multiple accept="image/*" style="display: none;" onchange="handlePhotoSelection(this)" />
       </div>
 
-      <div class="hint-msg" id="hint-msg">Please select at least 7 photos to unlock!</div>
+      <div class="hint-msg" id="hint-msg">Select photos to float around, or click below to enter directly! ✨</div>
 
+      <!-- Always unlocked button -->
       <button class="btn-open" id="btn-open" onclick="openGift()">✨ CLICK TO OPEN ✨</button>
     </div>
   </div>
@@ -548,7 +547,6 @@
         Ninte gift ammentedkka ind 🫣<br>Athinte abhipryo parayanm 😌
       </h2>
 
-      <!-- Added final wish text here -->
       <div>
         <div class="final-punchline">
           Once again Happy 18 Mara makri 🕺🐷🩷
@@ -559,54 +557,36 @@
 
   <script>
     let photoList = [];
-    let photosValid = false;
-
     const notes = ["Bestu 🤍", "My Sister 🫂", "Always Irritating 🐒", "Forever 🩷", "Day 1 ✨", "Partner in crime 🫣", "18th Birthday 🎂"];
+    const backupEmojis = ["🐒", "🩷", "🤍", "✨", "🫂", "🎂", "🌸"];
 
     function handlePhotoSelection(input) {
-      const btnOpen = document.getElementById('btn-open');
       const fileLabel = document.getElementById('file-label');
       const hintMsg = document.getElementById('hint-msg');
 
-      // Check for at least 7 photos
-      if (input.files && input.files.length >= 7) {
+      if (input.files && input.files.length > 0) {
         photoList = [];
         for (let i = 0; i < input.files.length; i++) {
           photoList.push(URL.createObjectURL(input.files[i]));
         }
 
-        photosValid = true;
-
         fileLabel.classList.add('selected');
         fileLabel.innerHTML = `✓ ${input.files.length} Photos Selected!`;
 
-        btnOpen.classList.add('active');
-        hintMsg.innerText = "Gift unlocked! Click below to open 🎁";
+        hintMsg.innerText = "Photos loaded! Click below to open 🎁";
         hintMsg.style.color = "#0ca678";
 
         startFloating();
-      } else if (input.files && input.files.length > 0) {
-        photosValid = false;
-        const remaining = 7 - input.files.length;
-        btnOpen.classList.remove('active');
-        fileLabel.classList.remove('selected');
-        fileLabel.innerHTML = `📷 Select 7 of <span class="highlight-your">YOUR</span> photos`;
-        
-        hintMsg.innerText = `⚠️ You selected ${input.files.length}. Please pick at least ${remaining} more photo(s)!`;
-        hintMsg.style.color = "#e03131";
       }
     }
 
+    // Opens immediately without minimum photo check
     function openGift() {
-      if (!photosValid) {
-        const hintMsg = document.getElementById('hint-msg');
-        hintMsg.innerText = "⚠️ Please select 7 or more photos to open!";
-        hintMsg.style.color = "#e03131";
-        return;
-      }
-
       const cover = document.getElementById('cover-page');
       const content = document.getElementById('main-content');
+
+      // Start floating elements if not already started
+      startFloating();
 
       cover.style.opacity = '0';
       setTimeout(() => {
@@ -634,20 +614,33 @@
     let floatInterval = null;
 
     function spawnFloatingPhoto() {
-      if (!photoList.length) return;
-
       const card = document.createElement('div');
       card.className = 'floating-card';
 
-      const randomImg = photoList[Math.floor(Math.random() * photoList.length)];
-      const img = document.createElement('img');
-      img.src = randomImg;
+      if (photoList.length > 0) {
+        // Floating user photos
+        const randomImg = photoList[Math.floor(Math.random() * photoList.length)];
+        const img = document.createElement('img');
+        img.src = randomImg;
+        card.appendChild(img);
+      } else {
+        // Floating emoji cards if no photos were chosen
+        const emojiDiv = document.createElement('div');
+        emojiDiv.style.width = '120px';
+        emojiDiv.style.height = '140px';
+        emojiDiv.style.display = 'flex';
+        emojiDiv.style.alignItems = 'center';
+        emojiDiv.style.justifyContent = 'center';
+        emojiDiv.style.fontSize = '3.5rem';
+        emojiDiv.style.background = '#ffeaf1';
+        emojiDiv.style.borderRadius = '8px';
+        emojiDiv.innerText = backupEmojis[Math.floor(Math.random() * backupEmojis.length)];
+        card.appendChild(emojiDiv);
+      }
 
       const caption = document.createElement('div');
       caption.className = 'card-caption';
       caption.innerText = notes[Math.floor(Math.random() * notes.length)];
-
-      card.appendChild(img);
       card.appendChild(caption);
 
       const leftPos = Math.random() * 80 + 5;
@@ -668,6 +661,9 @@
       spawnFloatingPhoto();
       floatInterval = setInterval(spawnFloatingPhoto, 1600);
     }
+
+    // Auto-start ambient floating icons
+    startFloating();
 
     function launchCelebration() {
       const count = 240;
